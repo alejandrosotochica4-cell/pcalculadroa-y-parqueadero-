@@ -1,144 +1,179 @@
-import tkinter as Ventana
 
-Usuario_actual = None
-Carro_actual = None
+import tkinter as tk
+from datetime import datetime
 
-obj_ventana = Ventana.Tk()
-obj_ventana.geometry("500x520")
-obj_ventana.config(bg="white")
-obj_ventana.resizable(False, False)
-obj_ventana.title("Parqueadero")
+# ===============================
+# CONFIGURACIÓN GENERAL
+# ===============================
 
-# =======================
-# TITULO
-# =======================
+usuario_actual = None
 
-Ventana.Label(obj_ventana,
-              text="SISTEMA PARQUEADERO",
-              bg="blue",
-              fg="white",
-              font=("Arial", 12, "bold"),
-              pady=8).pack(fill="x")
+ventana = tk.Tk()
+ventana.title("Sistema de Calculadora")
+ventana.geometry("520x620")
+ventana.configure(bg="#f2f2f2")
+ventana.resizable(False, False)
 
-# =======================
-# FRAME PRINCIPAL
-# =======================
+# ===============================
+# ESTILOS
+# ===============================
 
-frame = Ventana.Frame(obj_ventana, bg="lightblue")
-frame.pack(pady=10)
+COLOR_PRINCIPAL = "#1f4e79"
+COLOR_SECUNDARIO = "#d9e6f2"
+COLOR_BOTON = "#2e75b6"
+COLOR_TEXTO = "white"
 
-# ===== USUARIO =====
+# ===============================
+# SECCIÓN REGISTRO USUARIO
+# ===============================
 
-Ventana.Label(frame, text="ID", bg="lightblue").grid(row=0, column=0)
-entry_id = Ventana.Entry(frame)
-entry_id.grid(row=0, column=1)
+titulo_usuario = tk.Label(
+    ventana,
+    text="REGISTRO DE USUARIO",
+    bg=COLOR_PRINCIPAL,
+    fg="white",
+    font=("Arial", 14, "bold"),
+    pady=12
+)
+titulo_usuario.pack(fill="x")
 
-Ventana.Label(frame, text="Nombre", bg="lightblue").grid(row=1, column=0)
-entry_nombre = Ventana.Entry(frame)
-entry_nombre.grid(row=1, column=1)
+frame_usuario = tk.Frame(ventana, bg=COLOR_SECUNDARIO, pady=15)
+frame_usuario.pack(padx=20, pady=15, fill="x")
 
-Ventana.Label(frame, text="Tipo Usuario", bg="lightblue").grid(row=2, column=0)
-entry_tipo = Ventana.Entry(frame)
-entry_tipo.grid(row=2, column=1)
+tk.Label(frame_usuario, text="ID:", bg=COLOR_SECUNDARIO, font=("Arial", 11)).grid(row=0, column=0, padx=10, pady=8)
+entry_id = tk.Entry(frame_usuario, width=25)
+entry_id.grid(row=0, column=1, padx=10, pady=8)
+
+tk.Label(frame_usuario, text="Nombre:", bg=COLOR_SECUNDARIO, font=("Arial", 11)).grid(row=1, column=0, padx=10, pady=8)
+entry_nombre = tk.Entry(frame_usuario, width=25)
+entry_nombre.grid(row=1, column=1, padx=10, pady=8)
+
+label_usuario_registrado = tk.Label(
+    ventana,
+    text="Usuario no registrado",
+    bg="#f2f2f2",
+    font=("Arial", 11, "italic")
+)
+label_usuario_registrado.pack(pady=5)
 
 def registrar_usuario():
-    global Usuario_actual
+    global usuario_actual
+    id_usuario = entry_id.get().strip()
+    nombre_usuario = entry_nombre.get().strip()
 
-    if entry_id.get() and entry_nombre.get() and entry_tipo.get():
-        Usuario_actual = Usuario(entry_id.get(), entry_nombre.get(), entry_tipo.get())
-        label_registro.config(text="USUARIO REGISTRADO", fg="green")
+    if id_usuario and nombre_usuario:
+        usuario_actual = Usuario(id_usuario, nombre_usuario)
+        label_usuario_registrado.config(
+            text=f"Usuario activo: {nombre_usuario} (ID: {id_usuario})",
+            fg="green"
+        )
+        entry_id.delete(0, tk.END)
+        entry_nombre.delete(0, tk.END)
     else:
-        label_registro.config(text="FALTAN DATOS DEL USUARIO", fg="red")
+        label_usuario_registrado.config(
+            text="Complete todos los campos",
+            fg="red"
+        )
 
-Ventana.Button(frame, text="Registrar Usuario",
-               command=registrar_usuario,
-               bg="black", fg="white").grid(row=3, column=0, columnspan=2, pady=5)
+btn_registrar = tk.Button(
+    frame_usuario,
+    text="Registrar Usuario",
+    command=registrar_usuario,
+    bg=COLOR_BOTON,
+    fg=COLOR_TEXTO,
+    width=20
+)
+btn_registrar.grid(row=2, column=0, columnspan=2, pady=10)
 
-# ===== CARRO =====
+# ===============================
+# SECCIÓN CALCULADORA
+# ===============================
 
-Ventana.Label(frame, text="Placa", bg="lightblue").grid(row=4, column=0)
-entry_placa = Ventana.Entry(frame)
-entry_placa.grid(row=4, column=1)
+titulo_calc = tk.Label(
+    ventana,
+    text="CALCULADORA",
+    bg=COLOR_PRINCIPAL,
+    fg="white",
+    font=("Arial", 14, "bold"),
+    pady=12
+)
+titulo_calc.pack(fill="x", pady=(10, 0))
 
-Ventana.Label(frame, text="Tipo Carro", bg="lightblue").grid(row=5, column=0)
-entry_tipo_carro = Ventana.Entry(frame)
-entry_tipo_carro.grid(row=5, column=1)
+frame_calc = tk.Frame(ventana, bg=COLOR_SECUNDARIO, pady=20)
+frame_calc.pack(padx=20, pady=15, fill="x")
 
-Ventana.Label(frame, text="Color", bg="lightblue").grid(row=6, column=0)
-entry_color = Ventana.Entry(frame)
-entry_color.grid(row=6, column=1)
+tk.Label(frame_calc, text="Número 1:", bg=COLOR_SECUNDARIO).grid(row=0, column=0, padx=10, pady=8)
+entry_num1 = tk.Entry(frame_calc, width=25)
+entry_num1.grid(row=0, column=1, padx=10, pady=8)
 
-def registrar_carro():
-    global Carro_actual
+tk.Label(frame_calc, text="Número 2:", bg=COLOR_SECUNDARIO).grid(row=1, column=0, padx=10, pady=8)
+entry_num2 = tk.Entry(frame_calc, width=25)
+entry_num2.grid(row=1, column=1, padx=10, pady=8)
 
-    if entry_placa.get() and entry_tipo_carro.get() and entry_color.get():
-        Carro_actual = Carro(entry_placa.get(),
-                             entry_tipo_carro.get(),
-                             entry_color.get())
-        label_registro.config(text="CARRO REGISTRADO", fg="green")
-    else:
-        label_registro.config(text="FALTAN DATOS DEL CARRO", fg="red")
+tk.Label(frame_calc, text="Resultado:", bg=COLOR_SECUNDARIO).grid(row=2, column=0, padx=10, pady=8)
+entry_resultado = tk.Entry(frame_calc, width=25, state="readonly")
+entry_resultado.grid(row=2, column=1, padx=10, pady=8)
 
-Ventana.Button(frame, text="Registrar Carro",
-               command=registrar_carro,
-               bg="black", fg="white").grid(row=7, column=0, columnspan=2, pady=5)
+def realizar_operacion(tipo):
+    try:
+        num1 = float(entry_num1.get())
+        num2 = float(entry_num2.get())
 
-# ===== PARQUEADERO =====
+        calc = Calculadora(datetime.now().strftime("%d/%m/%Y %H:%M:%S"), tipo)
+        resultado = calc.hacer_operacion(num1, num2, tipo)
 
-Ventana.Label(frame, text="Puesto", bg="lightblue").grid(row=8, column=0)
-entry_puesto = Ventana.Entry(frame)
-entry_puesto.grid(row=8, column=1)
+        entry_resultado.config(state="normal")
+        entry_resultado.delete(0, tk.END)
+        entry_resultado.insert(0, str(resultado))
+        entry_resultado.config(state="readonly")
 
-Ventana.Label(frame, text="Fecha", bg="lightblue").grid(row=9, column=0)
-entry_fecha = Ventana.Entry(frame)
-entry_fecha.grid(row=9, column=1)
+        if usuario_actual:
+            calc.resultado = resultado
+            calc.guardar_info(usuario_actual, num1, num2)
 
-Ventana.Label(frame, text="Hora Entrada", bg="lightblue").grid(row=10, column=0)
-entry_hora_e = Ventana.Entry(frame)
-entry_hora_e.grid(row=10, column=1)
+    except ValueError:
+        entry_resultado.config(state="normal")
+        entry_resultado.delete(0, tk.END)
+        entry_resultado.insert(0, "Error: números inválidos")
+        entry_resultado.config(state="readonly")
 
-Ventana.Label(frame, text="Hora Salida", bg="lightblue").grid(row=11, column=0)
-entry_hora_s = Ventana.Entry(frame)
-entry_hora_s.grid(row=11, column=1)
+    except ZeroDivisionError:
+        entry_resultado.config(state="normal")
+        entry_resultado.delete(0, tk.END)
+        entry_resultado.insert(0, "Error: división por cero")
+        entry_resultado.config(state="readonly")
 
-Ventana.Label(frame, text="Estado", bg="lightblue").grid(row=12, column=0)
-entry_estado = Ventana.Entry(frame)
-entry_estado.grid(row=12, column=1)
+# BOTONES
+frame_botones = tk.Frame(frame_calc, bg=COLOR_SECUNDARIO)
+frame_botones.grid(row=3, column=0, columnspan=2, pady=15)
 
-def registrar_parqueo():
+tk.Button(frame_botones, text="Suma +", width=12,
+          command=lambda: realizar_operacion("suma"),
+          bg=COLOR_BOTON, fg="white").grid(row=0, column=0, padx=5, pady=5)
 
-    if not Usuario_actual:
-        label_registro.config(text="REGISTRE PRIMERO EL USUARIO", fg="red")
-        return
+tk.Button(frame_botones, text="Resta -", width=12,
+          command=lambda: realizar_operacion("resta"),
+          bg=COLOR_BOTON, fg="white").grid(row=0, column=1, padx=5, pady=5)
 
-    if not Carro_actual:
-        label_registro.config(text="REGISTRE PRIMERO EL CARRO", fg="red")
-        return
+tk.Button(frame_botones, text="Multiplicación ×", width=12,
+          command=lambda: realizar_operacion("multiplicacion"),
+          bg=COLOR_BOTON, fg="white").grid(row=1, column=0, padx=5, pady=5)
 
-    if not entry_puesto.get() or not entry_fecha.get() or not entry_hora_e.get() or not entry_hora_s.get() or not entry_estado.get():
-        label_registro.config(text="FALTAN DATOS DEL PARQUEADERO", fg="red")
-        return
+tk.Button(frame_botones, text="División ÷", width=12,
+          command=lambda: realizar_operacion("division"),
+          bg=COLOR_BOTON, fg="white").grid(row=1, column=1, padx=5, pady=5)
 
-    obj_parq = Parqueadero(
-        entry_puesto.get(),
-        entry_fecha.get(),
-        entry_hora_e.get(),
-        entry_hora_s.get(),
-        entry_estado.get()
-    )
+def limpiar():
+    entry_num1.delete(0, tk.END)
+    entry_num2.delete(0, tk.END)
+    entry_resultado.config(state="normal")
+    entry_resultado.delete(0, tk.END)
+    entry_resultado.config(state="readonly")
 
-    obj_parq.acumular_info(Usuario_actual, Carro_actual)
-    obj_parq.mostrar_tabla()
+tk.Button(frame_botones, text="Limpiar",
+          command=limpiar,
+          bg="red", fg="white",
+          width=26).grid(row=2, column=0, columnspan=2, pady=8)
 
-    label_registro.config(text="PARQUEO REGISTRADO CORRECTAMENTE", fg="green")
-
-Ventana.Button(frame, text="Registrar Parqueo",
-               command=registrar_parqueo,
-               bg="green", fg="white").grid(row=13, column=0, columnspan=2, pady=10)
-
-# ===== MENSAJE =====
-
-label_registro = Ventana.Label(frame, text="", bg="lightblue", font=("Arial", 10, "bold"))
-label_registro.grid(row=14, column=0, columnspan=2)
-
-obj_ventana.mainloop()
+# ===============================
+ventana.mainloop()
